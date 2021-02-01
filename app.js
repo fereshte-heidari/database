@@ -31,27 +31,54 @@ mongoose.connect("mongodb://localhost:27017/fruitsDB", {
   useUnifiedTopology: true
 });
 const fruitSchema = new mongoose.Schema({
-  name: String,
-  rating: Number,
+  name:{
+    type: String,
+    required: true
+  },
+  rating:{
+    type: Number,
+    min: 1,
+    max:10
+  },
   review: String
 });
 const Fruit = mongoose.model("Fruit", fruitSchema);
 const fruit = new Fruit({
-  name: "Apple",
-  rating: 7,
-  review: "pretty solid!"
+  rating: 5,
+  review: "Peaches are great!"
 });
 // fruit.save()
 const personSchema = new mongoose.Schema({
   name: String,
-  age: Number
-})
+  age: Number,
+  favoriteFruit: fruitSchema
+});
 const People = mongoose.model("People", personSchema);
+const pineapple= new Fruit({
+  name:"pineapple",
+  rating:9,
+  review:"Greatttty!"
+})
+// pineapple.save();
+
+// const people= new People({
+//   name:"Amy",
+//   age:12,
+//   favoriteFruit: pineapple
+// });
+
+const cucumber= new Fruit({name:"cucumber", rating:8,review:"nice"});
+
+// cucumber.save();
+
+
 const people = new People({
   name: "John",
   age: 37
+
 });
-// people.save();
+
+people.save();
 const kiwi = new Fruit({
   name: "kiwi",
   rating: 7,
@@ -69,14 +96,38 @@ const banana = new Fruit({
 //     console.log("Successfully saved all the fruits")
 //   }
 // });
-
+Fruit.updateOne({_id:"60179bc14db94435a8e6db89"},{name:"Peach"},function(err){
+  if(err){
+    console.log("Error")
+  }else{
+    console.log("the update was succeful");
+  }
+  Fruit.deleteOne({_id:"60179bc14db94435a8e6db89"},function(err){
+    if(err){
+      console.log("error");
+    }else{
+      console.log("Deleted the requested document!")
+    }
+  })
+})
 Fruit.find(function(err, fruits) {
   if (err) {
     console.log("error!");
   } else {
+    mongoose.connection.close();
     fruits.forEach(function(fruit){
       console.log(fruit.name);
     })
   }
+
+});
+
+// People.deleteMany({name:"John"},function(err){
+//   if(err){
+//     console.log("error")
+//   }
+// })
+
+People.updateOne({name:"John"},{favoriteFruit:cucumber},function(err){
 
 });
